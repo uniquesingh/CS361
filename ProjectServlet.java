@@ -58,7 +58,6 @@ public class ProjectServlet extends HttpServlet {
 	
 	public void menu(HttpServletRequest req, HttpServletResponse resp)throws IOException{
 		resp.setContentType("text/html");
-		
 		resp.getWriter().println("<div class=\"menu\">");					
 		resp.getWriter().println("	<div class=\"buttons\">");
 		resp.getWriter().println("		<ul class=\"buttons-outline\">");
