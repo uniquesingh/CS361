@@ -1,4 +1,4 @@
-package wake.kevin;
+package edu.uwm.cs361;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
