@@ -10,7 +10,7 @@ import com.google.appengine.api.datastore.Transaction;
 
 public class DemeritDatastoreService {
 	
-	private final String STAFF = "staff";
+	public final String STAFF = "staff";
 	private final String EMAIL = "email";
 	private final String OFFICE = "officeHours";
 	
@@ -19,11 +19,11 @@ public class DemeritDatastoreService {
 	private final String NAME = "name";
 	private final String TYPE = "type";
 	
-	private final String COURSE = "course";
+	public final String COURSE = "course";
 	private final String SECTION_LIST = "sections";
 	private final String CREDITS = "credits";
 	
-	private final String SECTION = "section";
+	public final String SECTION = "section";
 	private final String DAYS = "days";
 	private final String ROOM = "room";
 	private final String TIME = "time";
@@ -34,12 +34,20 @@ public class DemeritDatastoreService {
 	
 	/**
 	 * Constructor for DemeritDatastoreService
+	 * Use an instance of this for creates, updates, retrievals.
+	 * Use the getDatastore() method to get a DS reference for your queries.
 	 */
 	public DemeritDatastoreService()
 	{
 		ds = DatastoreServiceFactory.getDatastoreService();
 	}
 	
+	/**
+	 * getDatastore
+	 * 
+	 * Gets a reference to the internal datastore object- used to run your own queries
+	 * @return reference to the internal datastore.
+	 */
 	public DatastoreService getDatastore(){
 		return ds;
 	}
@@ -78,6 +86,9 @@ public class DemeritDatastoreService {
 		
 	}
 	
+	/*
+	 * Helper method
+	 */
 	private void addStaffToSection(String[] courseNumSectionNum, String email) throws EntityNotFoundException {
 		Entity mySection = null;
 		
@@ -105,6 +116,9 @@ public class DemeritDatastoreService {
 		
 	}
 
+	/*
+	 * Helper method
+	 */
 	private void addSectionToStaff(String courseNumSectionNum, String staffEmail) throws EntityNotFoundException {
 		Transaction txn = ds.beginTransaction();
 		try {
@@ -125,7 +139,23 @@ public class DemeritDatastoreService {
 			}
 		}
 	}
+	
 	//course num and section num cannot change
+	/**
+	 * updateSection
+	 * 
+	 * Use this to change any fields of the section, 
+	 * <br>EXCEPT the course number or section number ~these cannot change.
+	 * 
+	 * @param courseNumber String representing the course number
+	 * @param days Days of the week section meets. Use single letter representation to match standard. ex) M W R F
+	 * @param lecLabDis String indicating if section is LEC, LAB, or DIS
+	 * @param sectionNumber String representing the section number
+	 * @param room String representing the section location. ex) EMS W120
+	 * @param staffEmail String representing the staff's email address, use "" if none
+	 * @param time String representing meeting times.
+	 * @throws EntityNotFoundException Throws exception if trying to update course which doesn't exist
+	 */
 	public void updateSection(String courseNumber, String days, String lecLabDis,
 			String sectionNumber, String room, String staffEmail,
 			String time) throws EntityNotFoundException
@@ -158,8 +188,19 @@ public class DemeritDatastoreService {
 		
 	}
 
-
-	//section must already exist
+	/**
+	 * updateStaff
+	 * 
+	 * Use this to update any of the passed staff's fields. 
+	 * <br>Email CANNOT change and any sections MUST already exist **Will e updating to allow changing email**
+	 * 
+	 * @param email String representing staff's current email CANNOT change
+	 * @param name  String representing staffs new / unchanged name
+	 * @param courseNumSectionNum String array, each index is a string representing a class taught, MUST be in "COURSENUM SECTIONNUM" format.
+	 * @param officeHours String array, each index is a string representing a set of office hours. MUST be in "DAY TIMEFROM-TIMETO" format.
+	 * @param type String indicating Instructor or TA
+	 * @throws EntityNotFoundException Throws exception if staff is not found. i.e. email not existing staff
+	 */
 	public void updateStaff(String email, String name, String[] courseNumSectionNum, String[] officeHours, String type) throws EntityNotFoundException 
 	{
 
@@ -193,7 +234,21 @@ public class DemeritDatastoreService {
 
 	}
 	
-	//NOTE 10.26.14 15:12 if section key is not entered in proper format ("COURSENUM SECTIONNUM") method will fail
+	/**
+	 * hasNoDuplicate
+	 * 
+	 * Returns true if there is no duplicate of the passed key within the datastore, false otherwise.
+	 * 
+	 * @param entityType String representing what you are looking for. Can use our datastore instance variables:
+	 * <br>ds.STAFF
+	 * <br>ds.SECTION
+	 * <br>ds.COURSE
+	 * @param myKey String of the key for the particular obejct you are checking.
+	 * <br>For staff: use email
+	 * <br>For course: use course number
+	 * <br>For section, use COURSENUM SECTIONNUM !If section key not entered properly, will fail
+	 * @return True if entity already exists, false otherwise.
+	 */
 	public boolean hasNoDuplicate(String entityType, String myKey){
 		
 		Transaction txn = ds.beginTransaction();
@@ -210,7 +265,22 @@ public class DemeritDatastoreService {
 	}
 	
 	
-	//create course
+	/**
+	 * createCourse
+	 * 
+	 * Adds a new course to the datastore. MUST be created with an initial section. MUST check for duplicates first.
+	 * <br>If no staff, pass "" into email
+	 * @param name String representing the staff teaching the course
+	 * @param number String containing the course number
+	 * @param sectionNumber String containing the section number
+	 * @param credits String containing the number of credits
+	 * @param days String of days of the week section meets. Use single letter representation to match standard. ex) M W R F
+	 * @param lecLabDis String indicating if section is LEC, LAB, or DIS 
+	 * @param room String of the room section meets
+	 * @param staffEmail String representing the email of the section's instructor ("" if no staff)
+	 * @param time String of the times the section is meeting
+	 * @throws EntityNotFoundException Throws exception if the passed staff does not exist.
+	 */
 	public void createCourse(String name, String number, String sectionNumber, String credits, 
 							String days, String lecLabDis,
 							String room, String staffEmail, String time) throws EntityNotFoundException
@@ -226,6 +296,21 @@ public class DemeritDatastoreService {
 				sectionNumber, room, staffEmail, time);
 	}
 	
+	/**
+	 * createSection
+	 * 
+	 * Adds a section to a given course, saves to datastore.
+	 * <br>Both the staff AND the course MUST already exist
+	 * 
+	 * @param courseNumber String representing course number
+	 * @param days String representing days the section meets
+	 * @param lecLabDis String indicating section type: LEC, LAB, or DIS
+	 * @param sectionNumber String representing section number
+	 * @param room String indicating section's meeting room
+	 * @param staffEmail String containing section's instructor's email address
+	 * @param time String representing times the section meets
+	 * @throws EntityNotFoundException Throws exception if either staff OR course do not exist
+	 */
 	public void createSection(String courseNumber, String days, String lecLabDis,
 							String sectionNumber, String room, String staffEmail,
 							String time) throws EntityNotFoundException
@@ -265,8 +350,17 @@ public class DemeritDatastoreService {
 		ds.put(newSection);
 	}
 
-	public String[] makeDelStringToArray(String mySections) {
-		if(mySections.equals("")) {
+	/**
+	 * makeDelStringToArray
+	 * 
+	 * Makes a deliminated string into an array.Likely string will be office hours or section list.
+	 * <br>Use this on the entity properties from the entities you get from queries
+	 * 
+	 * @param stringIn Deliminated string to convert to array
+	 * @return String array containing the stringIn tokens
+	 */
+	public String[] makeDelStringToArray(String stringIn) {
+		if(stringIn.equals("")) {
 			String[] myRetFixer = {""};
 			return myRetFixer; 
 		}
@@ -274,24 +368,27 @@ public class DemeritDatastoreService {
 		String[] ret = new String[50];
 		ret[0] = "";
 		
-		int i = mySections.indexOf(DELIMITER);
+		int i = stringIn.indexOf(DELIMITER);
 		int j = -1;
 		int count = 0;
 		while(i >= 0)
 		{
 			if(j == -1) j = 0;
-			String addend = mySections.substring(j, i);
+			String addend = stringIn.substring(j, i);
 			ret[count] = addend;
 			count++;
 			j = i;
-			i = mySections.indexOf(DELIMITER, i+1);
+			i = stringIn.indexOf(DELIMITER, i+1);
 		}
 		
-		ret[count] = mySections.substring(j+1);
+		ret[count] = stringIn.substring(j+1);
 		
 		return ret;
 	}
 	
+	/*
+	 * Helper method
+	 */
 	private String makeDelString(String[] rawStr){
 
 		String ret = "";
@@ -308,6 +405,9 @@ public class DemeritDatastoreService {
 		return ret;
 	}
 	
+	/*
+	 * Helper method
+	 */
 	private String delimitedStringAppend(String mySections, String addend) {
 		String ret = "";
 		if(mySections != null) {
@@ -316,6 +416,14 @@ public class DemeritDatastoreService {
 		return ret + addend;
 	}
 	
+	/**
+	 * getOurKey
+	 * 
+	 * Gets an actual key value from a Key value returned from an Entities getKey() method
+	 * 
+	 * @param entry Key value returned from an Entities getKey() method
+	 * @return String containing a usable key
+	 */
 	public String getOurKey(Key entry){
 		String asString = entry.toString();
 		int index1 = asString.indexOf("\"");
@@ -324,11 +432,23 @@ public class DemeritDatastoreService {
 		return asString.substring(index1 + 1, index2);
 	}
 
+	/**
+	 * createSectionKey
+	 * 
+	 * Creates a unique section key which can be used for queries, datastore retrieves, datastore updates, etc.
+	 * 
+	 * @param courseNumber String representing the course number
+	 * @param sectionNumber String representing the section number
+	 * @return Key unique section key
+	 */
 	public Key createSectionKey(String courseNumber, String sectionNumber) {
 		
 		return KeyFactory.createKey(SECTION, (courseNumber + " " + sectionNumber));
 	}
 	
+	/*
+	 * Helper method
+	 */
 	private Entity getEntity(String type, String myKey) throws EntityNotFoundException
 	{
 
@@ -347,14 +467,44 @@ public class DemeritDatastoreService {
 		return lookingFor;
 	}
 	
+	/**
+	 * getStaff
+	 * 
+	 * Returns a staff entity from datastore based off the unique email identifier
+	 * 
+	 * @param myKey String representing the staff's email address
+	 * @return Entity representing the given staff
+	 * @throws EntityNotFoundException Throws exception if staff does not exist
+	 */
 	public Entity getStaff(String myKey) throws EntityNotFoundException
 	{
 		return getEntity(STAFF,myKey);
 	}
+	
+	/**
+	 * getSection
+	 * 
+	 * Returns a section entity from datastore based off the unique section identifier(COURSENUM SECTIONNUM)
+	 * <br>Can use createSectionKey() to get key value
+	 * 
+	 * @param myKey String representing the the section
+	 * @return Entity representing the given section
+	 * @throws EntityNotFoundException Throws exception if section does not exist
+	 */
 	public Entity getSection(String myKey) throws EntityNotFoundException
 	{
 		return getEntity(SECTION,myKey);
 	}
+	
+	/**
+	 * getCourse
+	 * 
+	 * Returns a course entity from datastore based off the unique course identifier(COURSENUM)
+	 * 
+	 * @param myKey String representing the course number
+	 * @return Entity representing the given course
+	 * @throws EntityNotFoundException Throws exception if course does not exist
+	 */
 	private Entity getCourse(String myKey) throws EntityNotFoundException
 	{
 		return getEntity(COURSE,myKey);
