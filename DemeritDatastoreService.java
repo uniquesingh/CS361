@@ -11,22 +11,21 @@ import com.google.appengine.api.datastore.Transaction;
 public class DemeritDatastoreService {
 	
 	public final String STAFF = "staff";
-	private final String EMAIL = "email";
-	private final String OFFICE = "officeHours";
+	public final String EMAIL = "email";
+	public final String OFFICE = "officeHours";
 	
-	
-	private final String COURSE_AND_SECTION = "courses";
-	private final String NAME = "name";
-	private final String TYPE = "type";
+	public final String COURSE_AND_SECTION = "courses";
+	public final String NAME = "name";
+	public final String TYPE = "type";
 	
 	public final String COURSE = "course";
-	private final String SECTION_LIST = "sections";
-	private final String CREDITS = "credits";
+	public final String SECTION_LIST = "sections";
+	public final String CREDITS = "credits";
 	
 	public final String SECTION = "section";
-	private final String DAYS = "days";
-	private final String ROOM = "room";
-	private final String TIME = "time";
+	public final String DAYS = "days";
+	public final String ROOM = "room";
+	public final String TIME = "time";
 	
 	private final String DELIMITER = "~";
 	
@@ -60,8 +59,8 @@ public class DemeritDatastoreService {
 	 * 
 	 * @param email String representing staff's email address
 	 * @param name String representing staff's name: First Last
-	 * @param courseNumSectionNum: String array, each index is a string representing a class taught, MUST be in "COURSENUM SECTIONNUM" format.
-	 * @param officeHours String array, each index is a string representing a set of office hours. MUST be in "DAY TIMEFROM-TIMETO" format.
+	 * @param courseNumSectionNum: (NULL if none) String array, each index is a string representing a class taught, MUST be in "COURSENUM SECTIONNUM" format.
+	 * @param officeHours (NULL if none) String array, each index is a string representing a set of office hours. MUST be in "DAY TIMEFROM-TIMETO" format.
 	 * @param type String representing type of staff: TA, Instructor, Admin.
 	 * @throws EntityNotFoundException Throws exception if any index of courseNumSectionNum is not already created.
 	 * 
@@ -76,12 +75,20 @@ public class DemeritDatastoreService {
 		Entity newStaff = new Entity(STAFF,email);
 		newStaff.setProperty(TYPE, type);
 		newStaff.setProperty(NAME,name);
-		newStaff.setProperty(COURSE_AND_SECTION,cNSN);
-		newStaff.setProperty(OFFICE,oH);
+		
+		if(courseNumSectionNum != null)
+			newStaff.setProperty(COURSE_AND_SECTION,cNSN);
+		else
+			newStaff.setProperty(COURSE_AND_SECTION,"");
+		
+		if(officeHours != null)
+			newStaff.setProperty(OFFICE,oH);
+		else
+			newStaff.setProperty(OFFICE,"");
 		
 		ds.put(newStaff);
 		
-		if(!cNSN.equals(""))
+		if(!(cNSN.equals("") || courseNumSectionNum == null))
 			addStaffToSection(courseNumSectionNum, email);
 		
 	}
@@ -140,7 +147,6 @@ public class DemeritDatastoreService {
 		}
 	}
 	
-	//course num and section num cannot change
 	/**
 	 * updateSection
 	 * 
@@ -169,7 +175,12 @@ public class DemeritDatastoreService {
 		    updatedSection.setProperty(DAYS, days);
 		    updatedSection.setProperty(TYPE, lecLabDis);
 		    updatedSection.setProperty(ROOM, room);
-		    updatedSection.setProperty(STAFF, staffEmail);
+		    
+		    if (!(staffEmail == null || staffEmail == ""))
+		    	updatedSection.setProperty(STAFF, staffEmail);
+		    else
+		    	updatedSection.setProperty(STAFF, "");
+		    
 		    updatedSection.setProperty(TIME, time);
 			    
 			ds.put(updatedSection);
@@ -192,7 +203,7 @@ public class DemeritDatastoreService {
 	 * updateStaff
 	 * 
 	 * Use this to update any of the passed staff's fields. 
-	 * <br>Email CANNOT change and any sections MUST already exist **Will e updating to allow changing email**
+	 * <br>Email CANNOT change and any sections MUST already exist **Will be updating to allow changing email**
 	 * 
 	 * @param email String representing staff's current email CANNOT change
 	 * @param name  String representing staffs new / unchanged name
@@ -249,7 +260,7 @@ public class DemeritDatastoreService {
 	 * <br>For section, use COURSENUM SECTIONNUM !If section key not entered properly, will fail
 	 * @return True if entity already exists, false otherwise.
 	 */
-	public boolean hasNoDuplicate(String entityType, String myKey){
+	public boolean hasDuplicate(String entityType, String myKey){
 		
 		Transaction txn = ds.beginTransaction();
 		try {
@@ -257,11 +268,11 @@ public class DemeritDatastoreService {
 		    @SuppressWarnings("unused")
 			Entity lookingFor = ds.get(entityKey);
 		} catch (EntityNotFoundException e) {
-		    return true;
+		    return false;
 		}
 		txn.commit();
 		
-		return false;
+		return true;
 	}
 	
 	
@@ -269,7 +280,7 @@ public class DemeritDatastoreService {
 	 * createCourse
 	 * 
 	 * Adds a new course to the datastore. MUST be created with an initial section. MUST check for duplicates first.
-	 * <br>If no staff, pass "" into email
+	 * <br>If no staff, pass "" or null into email
 	 * @param name String representing the staff teaching the course
 	 * @param number String containing the course number
 	 * @param sectionNumber String containing the section number

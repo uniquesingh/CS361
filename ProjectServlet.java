@@ -1,19 +1,45 @@
 package edu.uwm.cs361;
 
 import java.io.IOException;
-
+import java.util.List;
 import javax.servlet.http.*;
+import edu.uwm.cs361.DemeritDatastoreService;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
+import com.google.appengine.api.datastore.Query;
 
 @SuppressWarnings("serial")
 public class ProjectServlet extends HttpServlet {
 	
 	public ProjectServlet(){};
+
+	DemeritDatastoreService ds = new DemeritDatastoreService();
 	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
+		DatastoreService dsNew = ds.getDatastore();
+		String http = "";
+		http += "<form id=\"ccf\">"
+		+			"<div id=\"title-create-staff\">"
+		+				"Staff List"
+		+			"</div>"
+		+ 			"<div id=\"sub\">";
+		
+		Query q = new Query("user");
+		
+		List<Entity> users = dsNew.prepare(q).asList(FetchOptions.Builder.withDefaults());
+		http += "Ther are " + users.size() + " users.<br><br>";
+		for(Entity user:users){
+			http += user.getProperty("username") + " : " + user.getProperty("password") + "<br>";
+			//ds.delete(user.getKey());
+		}
+		http += "</div>"
+		+		"</form>";
 		banner(req,resp);
-		layout("test contents",req,resp);
+		layout(http,req,resp);
 		menu(req,resp);
 	}
 	
