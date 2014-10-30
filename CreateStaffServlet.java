@@ -36,16 +36,11 @@ public class CreateStaffServlet extends HttpServlet{
 		
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
+		String firstname = req.getParameter("firstname");
+		String lastname = req.getParameter("lastname");
+		String telephone = req.getParameter("telephone");
 
 		List<String> errors = new ArrayList<String>();
-
-		if (username.isEmpty()) {
-			errors.add("Username is required.");
-		}
-
-		if (password.isEmpty()) {
-			errors.add("Password is required.");
-		} 
 
 		//
 		// TODO - add error if username is taken
@@ -55,6 +50,9 @@ public class CreateStaffServlet extends HttpServlet{
 		Entity e = new Entity("user");
 		e.setProperty("username", username);
 		e.setProperty("password", password);
+		e.setProperty("firstname", firstname);
+		e.setProperty("lastname", lastname);
+		e.setProperty("telephone", telephone);
 		
 		Query q = new Query("user").setFilter(
 				new Query.FilterPredicate("username", Query.FilterOperator.EQUAL, username));
@@ -62,12 +60,24 @@ public class CreateStaffServlet extends HttpServlet{
 		
 		List<Entity> users = dsNew.prepare(q).asList(FetchOptions.Builder.withDefaults());
 		if(!users.isEmpty())
-			errors.add("No such username");
-		
-		//String passCheck = users.get(0).getProperty("password").toString();
-		//if(!password.equals(passCheck))
-			//errors.add("Incorrect PW");
-
+			errors.add("User '"+ e.getProperty("username")+"' Already Exist.");
+		else{
+			if (username.isEmpty()) {
+				errors.add("Username is required.");
+			}
+			if (password.isEmpty()) {
+				errors.add("Password is required.");
+			} 
+			if (firstname.isEmpty()) {
+				errors.add("First is required.");
+			} 
+			if (lastname.isEmpty()) {
+				errors.add("Lastname is required.");
+			} 
+			if (telephone.isEmpty()) {
+				errors.add("Telphone is required.");
+			} 
+		}
 		if (errors.size() > 0) {
 			page.banner(req,resp);
 			page.layout(displayForm(req,resp,errors),req,resp);
@@ -77,7 +87,22 @@ public class CreateStaffServlet extends HttpServlet{
 			// TODO - create user
 			//
 			dsNew.put(e);
-			resp.getWriter().println("Youve Got Mail " + e.getProperty("username"));
+			String http = "";
+			
+			http += "<form id=\"ccf\">"
+			+			"<div id=\"title-create-staff\">"
+			+				"Staff Created Conformation"
+			+			"</div>"
+			+ 			"<div id=\"sub\">"
+			+				"UserName: " + e.getProperty("username") + "<br>" 
+			+				"First Name: " + e.getProperty("firstname") + "<br>" 
+			+				"Last Name: " + e.getProperty("lastname") + "<br><br>" 
+			+				"The User has been Created."
+			+			"</div>"
+			+		"</form>";
+			page.banner(req,resp);
+			page.layout(http,req,resp);
+			page.menu(req,resp);
 		}
 	}
 	
@@ -93,6 +118,9 @@ public class CreateStaffServlet extends HttpServlet{
 		
 		String username = req.getParameter("username") != null ? req.getParameter("username") : "";
 		String password = req.getParameter("password") != null ? req.getParameter("password") : "";
+		String firstname = req.getParameter("firstname") != null ? req.getParameter("firstname") : "";
+		String lastname = req.getParameter("lastname") != null ? req.getParameter("lastname") : "";
+		String telephone = req.getParameter("telephone") != null ? req.getParameter("telephone") : "";
 
 		if (errors.size() > 0) {
 			http += "<ul class='errors'>";
@@ -109,15 +137,10 @@ public class CreateStaffServlet extends HttpServlet{
 		+					"<tr>"
 		+						"<td class=\"form\">"
 		+							"Username *: <input type=\"text\" id='username' name='username' value='" + username + "'/><br>"
-		+							"First Name *: <input type=\"text\" name=\"firstname\"/><br>"
-		+							"Date of Birth *: <input type=\"text\" name=\"dob\"/><br>"
-		+							"Address *: <input type=\"text\" name=\"address\"<br>"
-		+						"</td>"
-		+						"<td class=\"form\">"
 		+							"Password *: <input type=\"password\" id='password' name='password' value='" + password + "'/><br>"
-		+							"Last Name *: <input type=\"text\" name=\"lastname\"/><br>"
-		+							"Email *: <input type=\"email\" name=\"email\" /><br>"
-		+							"Telephone: <input type=\"text\" name=\"telephone\"/><br>"
+		+							"First Name *: <input type=\"text\" id='firstname' name='firstname' value='" + firstname + "'/><br>"
+		+							"Last Name *: <input type=\"text\" id='lastname' name='lastname' value='" + lastname + "'/><br>"
+		+							"Telephone: <input type=\"text\" id='telephone' name='telephone' value='" + telephone + "'/><br>"
 		+						"</td>"
 		+					"</tr>"
 		+				"</table>"
@@ -127,4 +150,5 @@ public class CreateStaffServlet extends HttpServlet{
 		
 		return http;
 	}
+
 }
