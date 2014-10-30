@@ -13,7 +13,7 @@ public class ProjectServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		banner(req,resp);
-		layout("Test","test contents",req,resp);
+		layout("test contents",req,resp);
 		menu(req,resp);
 	}
 	
@@ -39,19 +39,12 @@ public class ProjectServlet extends HttpServlet {
 		+						"</div>");
 	}
 	
-	public void layout(String title, String http, HttpServletRequest req, HttpServletResponse resp)throws IOException{
+	public void layout(String http, HttpServletRequest req, HttpServletResponse resp)throws IOException{
 		resp.setContentType("text/html");
 		
 		resp.getWriter().println("<div class=\"layout background-style box-outline\">"
 		+							"	<div class=\"page-after-banner\">"
-		+							"		<form id=\"ccf\">"
-		+							"			<div id=\"title-create-staff\">"
-		+											title
-		+							"			</div>"
-		+							"			<div id=\"sub\">"
-		+											http
-		+							"			</div"
-		+							"		</form>"
+		+									http
 		+							"	</div>"
 		+							"</div>");
 	}
@@ -79,7 +72,7 @@ public class ProjectServlet extends HttpServlet {
 		resp.getWriter().println("					<li><a href=\"Staff_Home_Page.html\"> Staff Home </a></li>");
 		resp.getWriter().println("				</ul>");
 		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"staffCreate.html\"> Create Staff</a></li>");
+		resp.getWriter().println("					<li><a href=\"/createStaff\"> Create Staff</a></li>");
 		resp.getWriter().println("				</ul>");
 		resp.getWriter().println("				<ul class=\"buttons-outline\">");
 		resp.getWriter().println("					<li><a href=\"staffEdit.html\"> Edit Staff</a></li>");

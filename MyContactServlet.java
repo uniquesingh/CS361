@@ -18,7 +18,7 @@ public class MyContactServlet extends HttpServlet{
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		page.banner(req,resp);
-		page.layout("Course",contact(),req,resp);
+		page.layout(contact(),req,resp);
 		page.menu(req,resp);
 	}
 	
@@ -31,6 +31,7 @@ public class MyContactServlet extends HttpServlet{
 		String http = "";
 		try {
 			String[] myS = {""};
+			//ds.createStaff("sukh@gmail.com", "Sukhi Singh", myS, myS, "TA");
 			http += ds.getStaff("sukh@gmail.com");
 		} catch (EntityNotFoundException e) {
 			// TODO Auto-generated catch block
