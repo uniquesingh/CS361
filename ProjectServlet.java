@@ -60,7 +60,7 @@ public class ProjectServlet extends HttpServlet {
 		
 		resp.getWriter().println("<div class=\"banner\">"
 		+							"<a class=\"plbrand mainlogo-link\" href=\"Admin_Home_Page.html\" title=\"UW-Milwaukee D2L\">"
-		+								"<img class=\"mainlogo-img\" id=\"box-outline\" src=\"Images/UWM_D2L_banner_960w1.png\" alt=\"UW-Milwaukee D2L\">"
+		+								"<img class=\"mainlogo-img\" src=\"Images/UWM_D2L_banner_960w1.png\" alt=\"UW-Milwaukee D2L\">"
 		+							"</a>"
 		+						"</div>");
 	}
@@ -68,7 +68,7 @@ public class ProjectServlet extends HttpServlet {
 	public void layout(String http, HttpServletRequest req, HttpServletResponse resp)throws IOException{
 		resp.setContentType("text/html");
 		
-		resp.getWriter().println("<div class=\"layout background-style box-outline\">"
+		resp.getWriter().println("<div class=\"layout background-style\">"
 		+							"	<div class=\"page-after-banner\">"
 		+									http
 		+							"	</div>"
@@ -80,7 +80,7 @@ public class ProjectServlet extends HttpServlet {
 		resp.getWriter().println("<div class=\"menu\">");					
 		resp.getWriter().println("	<div class=\"buttons\">");
 		resp.getWriter().println("		<ul class=\"buttons-outline\">");
-		resp.getWriter().println("			<li> <a href=\"Admin_Home_Page.html\"> Home</a></li>");
+		resp.getWriter().println("			<li> <a href=\"/project\"> Home</a></li>");
 		resp.getWriter().println("		</ul>");
 		resp.getWriter().println("		<ul class=\"buttons-outline\">");
 		resp.getWriter().println("			<li id=\"b1\"> <a href=\"#\">Admin</a>");

@@ -74,9 +74,6 @@ public class CreateStaffServlet extends HttpServlet{
 			if (lastname.isEmpty()) {
 				errors.add("Lastname is required.");
 			} 
-			if (telephone.isEmpty()) {
-				errors.add("Telphone is required.");
-			} 
 		}
 		if (errors.size() > 0) {
 			page.banner(req,resp);
@@ -136,11 +133,11 @@ public class CreateStaffServlet extends HttpServlet{
 		+				"<table>"
 		+					"<tr>"
 		+						"<td class=\"form\">"
-		+							"Username *: <input type=\"text\" id='username' name='username' value='" + username + "'/><br>"
-		+							"Password *: <input type=\"password\" id='password' name='password' value='" + password + "'/><br>"
-		+							"First Name *: <input type=\"text\" id='firstname' name='firstname' value='" + firstname + "'/><br>"
-		+							"Last Name *: <input type=\"text\" id='lastname' name='lastname' value='" + lastname + "'/><br>"
-		+							"Telephone: <input type=\"text\" id='telephone' name='telephone' value='" + telephone + "'/><br>"
+		+							"Username *: <input class='createStaffInput' type=\"text\" id='username' name='username' value='" + username + "'/><br>"
+		+							"Password *: <input class='createStaffInput' type=\"password\" id='password' name='password' value='" + password + "'/><br>"
+		+							"First Name *: <input class='createStaffInput' type=\"text\" id='firstname' name='firstname' value='" + firstname + "'/><br>"
+		+							"Last Name *: <input class='createStaffInput' type=\"text\" id='lastname' name='lastname' value='" + lastname + "'/><br>"
+		+							"Telephone: <input class='createStaffInput' type=\"text\" id='telephone' name='telephone' value='" + telephone + "'/><br>"
 		+						"</td>"
 		+					"</tr>"
 		+				"</table>"
