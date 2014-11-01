@@ -20,7 +20,7 @@ import edu.uwm.cs361.DemeritDatastoreService;;
 @SuppressWarnings("serial")
 public class CreateStaffServlet extends HttpServlet{
 	ProjectServlet page = new ProjectServlet();
-	DemeritDatastoreService ds = new DemeritDatastoreService();
+	DemeritDatastoreService data = new DemeritDatastoreService();
 	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -39,6 +39,7 @@ public class CreateStaffServlet extends HttpServlet{
 		String firstname = req.getParameter("firstname");
 		String lastname = req.getParameter("lastname");
 		String telephone = req.getParameter("telephone");
+		String stafftype = req.getParameter("stafftype");
 
 		List<String> errors = new ArrayList<String>();
 
@@ -46,22 +47,27 @@ public class CreateStaffServlet extends HttpServlet{
 		// TODO - add error if username is taken
 		//
 		
-		DatastoreService dsNew =  ds.getDatastore();
+		DatastoreService dsNew =  data.getDatastore();
 		Entity e = new Entity("user");
 		e.setProperty("username", username);
 		e.setProperty("password", password);
 		e.setProperty("firstname", firstname);
 		e.setProperty("lastname", lastname);
 		e.setProperty("telephone", telephone);
+		e.setProperty("stafftype", stafftype);
 		
-		Query q = new Query("user").setFilter(
-				new Query.FilterPredicate("username", Query.FilterOperator.EQUAL, username));
+		Query q = new Query(data.STAFF);
 		
 		
 		List<Entity> users = dsNew.prepare(q).asList(FetchOptions.Builder.withDefaults());
-		if(!users.isEmpty())
-			errors.add("User '"+ e.getProperty("username")+"' Already Exist.");
-		else{
+		boolean exist = true;
+		for(Entity user:users){
+			if(user.getProperty(data.EMAIL).equals(username)){
+				errors.add("User '"+ e.getProperty("username")+"' Already Exist.");
+				exist = false;
+			}
+		}
+		if(exist){
 			if (username.isEmpty()) {
 				errors.add("Username is required.");
 			}
@@ -74,6 +80,9 @@ public class CreateStaffServlet extends HttpServlet{
 			if (lastname.isEmpty()) {
 				errors.add("Lastname is required.");
 			} 
+			if (stafftype.isEmpty()) {
+				errors.add("Staff Type is required.");
+			} 
 		}
 		if (errors.size() > 0) {
 			page.banner(req,resp);
@@ -82,11 +91,18 @@ public class CreateStaffServlet extends HttpServlet{
 		} else {
 			//
 			// TODO - create user
-			//
-			dsNew.put(e);
+			//		
+			try {
+				String[] myS = {""};
+				data.createStaff(username, firstname + " " +lastname, password, telephone, myS, myS, stafftype);
+			} catch (EntityNotFoundException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+			//dsNew.put(e);
 			String http = "";
 			
-			http += "<form id=\"ccf\">"
+			http += "<form id=\"ccf\" method=\"GET\" action=\"/createStaff\">"
 			+			"<div id=\"title-create-staff\">"
 			+				"Staff Created Conformation"
 			+			"</div>"
@@ -94,7 +110,9 @@ public class CreateStaffServlet extends HttpServlet{
 			+				"UserName: " + e.getProperty("username") + "<br>" 
 			+				"First Name: " + e.getProperty("firstname") + "<br>" 
 			+				"Last Name: " + e.getProperty("lastname") + "<br><br>" 
-			+				"The User has been Created."
+			+				"Staff Type: " + e.getProperty("stafftype") + "<br>" 
+			+				"The User has been Created.<br><br><br><br><br><br>"
+			+				"<input class=\"submit\" type=\"submit\" value=\"Back\" />"
 			+			"</div>"
 			+		"</form>";
 			page.banner(req,resp);
@@ -118,6 +136,7 @@ public class CreateStaffServlet extends HttpServlet{
 		String firstname = req.getParameter("firstname") != null ? req.getParameter("firstname") : "";
 		String lastname = req.getParameter("lastname") != null ? req.getParameter("lastname") : "";
 		String telephone = req.getParameter("telephone") != null ? req.getParameter("telephone") : "";
+		String stafftype = req.getParameter("stafftype") != null ? req.getParameter("stafftype") : "";
 
 		if (errors.size() > 0) {
 			http += "<ul class='errors'>";
@@ -138,6 +157,10 @@ public class CreateStaffServlet extends HttpServlet{
 		+							"First Name *: <input class='createStaffInput' type=\"text\" id='firstname' name='firstname' value='" + firstname + "'/><br>"
 		+							"Last Name *: <input class='createStaffInput' type=\"text\" id='lastname' name='lastname' value='" + lastname + "'/><br>"
 		+							"Telephone: <input class='createStaffInput' type=\"text\" id='telephone' name='telephone' value='" + telephone + "'/><br>"
+		+							"Staff Type: <select class='staff-select createStaffInput' id='stafftype' name='stafftype' value='" + stafftype + "'>"
+		+											"<option> Instructor </option>"
+		+											"<option> TA </option>"
+		+										"</select><br>"
 		+						"</td>"
 		+					"</tr>"
 		+				"</table>"
