@@ -13,6 +13,8 @@ public class DemeritDatastoreService {
 	public final String STAFF = "staff";
 	public final String EMAIL = "email";
 	public final String OFFICE = "officeHours";
+	public final String PASSWORD = "password";
+	public final String TELEPHONE = "telephone";
 	
 	public final String COURSE_AND_SECTION = "courses";
 	public final String NAME = "name";
@@ -29,7 +31,7 @@ public class DemeritDatastoreService {
 	
 	private final String DELIMITER = "~";
 	
-	private DatastoreService ds = null;
+	public DatastoreService ds = DatastoreServiceFactory.getDatastoreService();;
 	
 	/**
 	 * Constructor for DemeritDatastoreService
@@ -66,13 +68,16 @@ public class DemeritDatastoreService {
 	 * 
 	 * @postcondition Staff will be an entity in datastore.
 	 */
-	public void createStaff(String email, String name, String[] courseNumSectionNum, String[] officeHours, String type) throws EntityNotFoundException
+	public void createStaff(String email, String name, String password, String telephone, String[] courseNumSectionNum, String[] officeHours, String type) throws EntityNotFoundException
 	{
 		
 		String cNSN = makeDelString(courseNumSectionNum);
 		String oH = makeDelString(officeHours);
 		
 		Entity newStaff = new Entity(STAFF,email);
+		newStaff.setProperty(EMAIL, email);
+		newStaff.setProperty(PASSWORD, password);
+		newStaff.setProperty(TELEPHONE, telephone);
 		newStaff.setProperty(TYPE, type);
 		newStaff.setProperty(NAME,name);
 		
@@ -212,7 +217,7 @@ public class DemeritDatastoreService {
 	 * @param type String indicating Instructor or TA
 	 * @throws EntityNotFoundException Throws exception if staff is not found. i.e. email not existing staff
 	 */
-	public void updateStaff(String email, String name, String[] courseNumSectionNum, String[] officeHours, String type) throws EntityNotFoundException 
+	public void updateStaff(String email, String name, String password, String telephone, String[] courseNumSectionNum, String[] officeHours, String type) throws EntityNotFoundException 
 	{
 
 			Transaction txn = ds.beginTransaction();
@@ -222,6 +227,8 @@ public class DemeritDatastoreService {
   
 			    employee.setProperty(NAME, name);
 			    employee.setProperty(TYPE, type);
+			    employee.setProperty(PASSWORD, password);
+			    employee.setProperty(TELEPHONE, telephone);
 			     
 			    String newCourseSection = makeDelString(courseNumSectionNum);
 			    String newOfficeHours = makeDelString(officeHours);

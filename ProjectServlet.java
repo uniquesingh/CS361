@@ -2,10 +2,13 @@ package edu.uwm.cs361;
 
 import java.io.IOException;
 import java.util.List;
+
 import javax.servlet.http.*;
+
 import edu.uwm.cs361.DemeritDatastoreService;
 
 import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query;
@@ -15,12 +18,11 @@ public class ProjectServlet extends HttpServlet {
 	
 	public ProjectServlet(){};
 
-	DemeritDatastoreService ds = new DemeritDatastoreService();
+	DemeritDatastoreService data = new DemeritDatastoreService();
 	
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-		DatastoreService dsNew = ds.getDatastore();
 		String http = "";
 		http += "<form id=\"ccf\">"
 		+			"<div id=\"title-create-staff\">"
@@ -28,12 +30,14 @@ public class ProjectServlet extends HttpServlet {
 		+			"</div>"
 		+ 			"<div id=\"sub\">";
 		
-		Query q = new Query("user");
+		Query q = new Query(data.STAFF);
+
+		DatastoreService ds = data.getDatastore();
 		
-		List<Entity> users = dsNew.prepare(q).asList(FetchOptions.Builder.withDefaults());
+		List<Entity> users = ds.prepare(q).asList(FetchOptions.Builder.withDefaults());
 		http += "Ther are " + users.size() + " users.<br><br>";
 		for(Entity user:users){
-			http += user.getProperty("username") + " : " + user.getProperty("password") + "<br>";
+			http += "Name: " + user.getProperty(data.NAME) + "<br>";
 			//ds.delete(user.getKey());
 		}
 		http += "</div>"
@@ -101,10 +105,10 @@ public class ProjectServlet extends HttpServlet {
 		resp.getWriter().println("					<li><a href=\"/createStaff\"> Create Staff</a></li>");
 		resp.getWriter().println("				</ul>");
 		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"staffEdit.html\"> Edit Staff</a></li>");
+		resp.getWriter().println("					<li><a href=\"/editStaff\"> Edit Staff</a></li>");
 		resp.getWriter().println("				</ul>");
 		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"staffView.html\"> View Staff</a></li>");
+		resp.getWriter().println("					<li><a href=\"/viewStaff\"> View Staff</a></li>");
 		resp.getWriter().println("				</ul>");
 		resp.getWriter().println("				<ul class=\"buttons-outline\">");
 		resp.getWriter().println("					<li><a href=\"staffListPage.html\">Staff List</a></li>");

@@ -38,7 +38,7 @@ public class MyContactServlet extends HttpServlet{
 		try {
 			String[] myS = {""};
 			//ds.createStaff("sukh@gmail.com", "Sukhi Singh", myS, myS, "TA");
-			http += ds.getStaff("sukh@gmail.com");
+			http += ds.getStaff("sukhi@uwm.edu");
 		} catch (EntityNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
