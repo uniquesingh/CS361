@@ -78,6 +78,7 @@ public class EditStaffServlet extends HttpServlet{
 			throws IOException {
 		
 		String username = req.getParameter("username");
+		username = username.toLowerCase();
 		String password = req.getParameter("password");
 		String firstname = req.getParameter("firstname");
 		String lastname = req.getParameter("lastname");

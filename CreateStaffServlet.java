@@ -35,6 +35,7 @@ public class CreateStaffServlet extends HttpServlet{
 			throws IOException {
 		
 		String username = req.getParameter("username");
+		username = username.toLowerCase();
 		String password = req.getParameter("password");
 		String firstname = req.getParameter("firstname");
 		String lastname = req.getParameter("lastname");
@@ -42,15 +43,10 @@ public class CreateStaffServlet extends HttpServlet{
 		String stafftype = req.getParameter("stafftype");
 
 		List<String> errors = new ArrayList<String>();
-
-		//
-		// TODO - add error if username is taken
-		//
 		
 		DatastoreService dsNew =  data.getDatastore();
 		
 		Query q = new Query(data.STAFF);
-		
 		
 		List<Entity> users = dsNew.prepare(q).asList(FetchOptions.Builder.withDefaults());
 		boolean exist = true;
@@ -83,10 +79,7 @@ public class CreateStaffServlet extends HttpServlet{
 			page.banner(req,resp);
 			page.layout(displayForm(req,resp,errors),req,resp);
 			page.menu(req,resp);
-		} else {
-			//
-			// TODO - create user
-			//		
+		} else {	
 			try {
 				String[] myS = {""};
 				data.createStaff(username, firstname + " " +lastname, password, telephone, myS, myS, stafftype);
@@ -94,7 +87,6 @@ public class CreateStaffServlet extends HttpServlet{
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
 			}
-			//dsNew.put(e);
 			String http = "";
 			
 			http += "<form id=\"ccf\" method=\"GET\" action=\"/createStaff\">"
@@ -127,6 +119,7 @@ public class CreateStaffServlet extends HttpServlet{
 		+			"</div>";
 		
 		String username = req.getParameter("username") != null ? req.getParameter("username") : "";
+		username = username.toLowerCase();
 		String password = req.getParameter("password") != null ? req.getParameter("password") : "";
 		String firstname = req.getParameter("firstname") != null ? req.getParameter("firstname") : "";
 		String lastname = req.getParameter("lastname") != null ? req.getParameter("lastname") : "";
