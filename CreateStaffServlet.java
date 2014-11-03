@@ -62,9 +62,11 @@ public class CreateStaffServlet extends HttpServlet{
 		List<Entity> users = dsNew.prepare(q).asList(FetchOptions.Builder.withDefaults());
 		boolean exist = true;
 		for(Entity user:users){
-			if(user.getProperty(data.EMAIL).equals(username)){
-				errors.add("User '"+ e.getProperty("username")+"' Already Exist.");
-				exist = false;
+			if(!username.isEmpty() && user.getProperty(data.EMAIL) != null){
+				if(user.getProperty(data.EMAIL).equals(username)){
+					errors.add("User '"+ e.getProperty("username")+"' Already Exist.");
+					exist = false;
+				}
 			}
 		}
 		if(exist){
