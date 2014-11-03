@@ -56,7 +56,7 @@ public class ViewStaffServlet extends HttpServlet{
 		
 		http += "<form id=\"ccf\" method=\"POST\" action=\"/viewStaff\">"
 		+			"<div id=\"title-create-staff\">"
-		+				"View Staff's"
+		+				"View Staff"
 		+			"</div>";
 
 		http += 	"<div id=\"sub\">"

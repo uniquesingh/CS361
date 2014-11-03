@@ -86,22 +86,21 @@ public class EditStaffServlet extends HttpServlet{
 		String staff = req.getParameter("staff");
 
 		List<String> errors = new ArrayList<String>();
-
-		//
-		// TODO - add error if username is taken
-		//
 		
-		Entity e = new Entity("user");
-		e.setProperty("username", username);
-		e.setProperty("password", password);
-		e.setProperty("firstname", firstname);
-		e.setProperty("lastname", lastname);
-		e.setProperty("telephone", telephone);
-		e.setProperty("stafftype", stafftype);
-		
-		
-		if (staff.isEmpty()) {
+		if (username.isEmpty()) {
 			errors.add("Username is required.");
+		}
+		if (password.isEmpty()) {
+			errors.add("Password is required.");
+		} 
+		if (firstname.isEmpty()) {
+			errors.add("First is required.");
+		} 
+		if (lastname.isEmpty()) {
+			errors.add("Lastname is required.");
+		} 
+		if (stafftype.isEmpty()) {
+			errors.add("Staff Type is required.");
 		}
 		
 		if (errors.size() > 0) {
@@ -119,7 +118,6 @@ public class EditStaffServlet extends HttpServlet{
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
 			}
-			//dsNew.put(e);
 			String http = "";
 			
 			http += "<form id=\"ccf\" method=\"get\" action=\"/editStaff\">"
@@ -127,10 +125,10 @@ public class EditStaffServlet extends HttpServlet{
 			+				"Staff Update Conformation"
 			+			"</div>"
 			+ 			"<div id=\"sub\">"
-			+				"UserName: " + e.getProperty("username") + "<br>" 
-			+				"First Name: " + e.getProperty("firstname") + "<br>" 
-			+				"Last Name: " + e.getProperty("lastname") + "<br><br>" 
-			+				"Staff Type: " + e.getProperty("stafftype") + "<br>" 
+			+				"UserName: " + username + "<br>" 
+			+				"First Name: " + firstname + "<br>" 
+			+				"Last Name: " + lastname + "<br><br>" 
+			+				"Staff Type: " + stafftype + "<br>" 
 			+				"The User has been Created.<br><br><br><br><br><br>"
 			+				"<input class=\"submit\" type=\"submit\" value=\"Back\" />"
 			+			"</div>"
@@ -189,7 +187,7 @@ public class EditStaffServlet extends HttpServlet{
 
 				http+=				"<tr>"
 				+						"<td class=\"form\">"
-				+							"Username *: <input class='createStaffInput' type=\"text\" id='username' name='username' value='" + user.getProperty(data.EMAIL) + "'/><br>"
+				+							"Username *: <input readonly class='createStaffInput' type=\"text\" id='username' name='username' value='" + user.getProperty(data.EMAIL) + "'/><br>"
 				+							"Password *: <input class='createStaffInput' type=\"password\" id='password' name='password' value='" + user.getProperty(data.PASSWORD) + "'/><br>"
 				+							"First Name *: <input class='createStaffInput' type=\"text\" id='firstname' name='firstname' value='" + na[0].toString() + "'/><br>"
 				+							"Last Name *: <input class='createStaffInput' type=\"text\" id='lastname' name='lastname' value='" + na[1].toString() + "'/><br>"

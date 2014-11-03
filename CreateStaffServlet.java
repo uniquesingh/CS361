@@ -48,13 +48,6 @@ public class CreateStaffServlet extends HttpServlet{
 		//
 		
 		DatastoreService dsNew =  data.getDatastore();
-		Entity e = new Entity("user");
-		e.setProperty("username", username);
-		e.setProperty("password", password);
-		e.setProperty("firstname", firstname);
-		e.setProperty("lastname", lastname);
-		e.setProperty("telephone", telephone);
-		e.setProperty("stafftype", stafftype);
 		
 		Query q = new Query(data.STAFF);
 		
@@ -64,7 +57,7 @@ public class CreateStaffServlet extends HttpServlet{
 		for(Entity user:users){
 			if(!username.isEmpty() && user.getProperty(data.EMAIL) != null){
 				if(user.getProperty(data.EMAIL).equals(username)){
-					errors.add("User '"+ e.getProperty("username")+"' Already Exist.");
+					errors.add("User '"+ username +"' Already Exist.");
 					exist = false;
 				}
 			}
@@ -109,10 +102,10 @@ public class CreateStaffServlet extends HttpServlet{
 			+				"Staff Created Conformation"
 			+			"</div>"
 			+ 			"<div id=\"sub\">"
-			+				"UserName: " + e.getProperty("username") + "<br>" 
-			+				"First Name: " + e.getProperty("firstname") + "<br>" 
-			+				"Last Name: " + e.getProperty("lastname") + "<br><br>" 
-			+				"Staff Type: " + e.getProperty("stafftype") + "<br>" 
+			+				"UserName: " + username + "<br>" 
+			+				"First Name: " + firstname + "<br>" 
+			+				"Last Name: " + lastname + "<br><br>" 
+			+				"Staff Type: " + stafftype + "<br>" 
 			+				"The User has been Created.<br><br><br><br><br><br>"
 			+				"<input class=\"submit\" type=\"submit\" value=\"Back\" />"
 			+			"</div>"
