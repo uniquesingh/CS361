@@ -64,7 +64,8 @@ public class ViewStaffServlet extends HttpServlet{
 		+					"<tr>"
 		+						"<td class='form'>"
 		+							"Staff:"
-		+							"<select id='stafftype' name='stafftype' class='staff-select'>";
+		+							"<select id='stafftype' name='stafftype' class='staff-select'>"
+		+									"<option value = '' selected> Select a Person </option>";
 										http += "<option disabled>Instructor's</option>";		
 										for(Entity user:users){
 											if(!user.getProperty(data.TYPE).equals("TA"))

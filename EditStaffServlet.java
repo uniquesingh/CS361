@@ -45,7 +45,8 @@ public class EditStaffServlet extends HttpServlet{
 			+					"<tr>"
 			+						"<td class='form'>"
 			+							"Staff:"
-			+							"<select id='staff' name='staff' class='staff-select'>";
+			+							"<select id='staff' name='staff' class='staff-select'>"
+			+									"<option value = '' selected> Select a Person </option>";
 											http += "<option disabled>Instructor's</option>";		
 											for(Entity user:users){
 												if(!user.getProperty(data.TYPE).equals("TA"))
@@ -158,7 +159,8 @@ public class EditStaffServlet extends HttpServlet{
 		+					"<tr>"
 		+						"<td class='form'>"
 		+							"Staff:"
-		+							"<select id='staff' name='staff' class='staff-select'>";
+		+							"<select id='staff' name='staff' class='staff-select'>"
+		+									"<option value = '' selected> Select a Person </option>";
 										http += "<option disabled>Instructor's</option>";		
 										for(Entity user:users){
 											if(!user.getProperty(data.TYPE).equals("TA"))
@@ -194,6 +196,7 @@ public class EditStaffServlet extends HttpServlet{
 				+							"Last Name *: <input class='createStaffInput' type=\"text\" id='lastname' name='lastname' value='" + na[1].toString() + "'/><br>"
 				+							"Telephone: <input class='createStaffInput' type=\"text\" id='telephone' name='telephone' value='" + user.getProperty(data.TELEPHONE) + "'/><br>"
 				+							"Staff Type: <select class='staff-select createStaffInput' id='stafftype' name='stafftype' value='" + user.getProperty(data.TYPE) + "'>"
+				+											"<option value = '' selected> Select a Type </option>"
 				+											"<option> Instructor </option>"
 				+											"<option> TA </option>"
 				+										"</select><br>"

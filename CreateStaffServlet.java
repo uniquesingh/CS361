@@ -146,6 +146,7 @@ public class CreateStaffServlet extends HttpServlet{
 		+							"Last Name *: <input class='createStaffInput' type=\"text\" id='lastname' name='lastname' value='" + lastname + "'/><br>"
 		+							"Telephone: <input class='createStaffInput' type=\"text\" id='telephone' name='telephone' value='" + telephone + "'/><br>"
 		+							"Staff Type: <select class='staff-select createStaffInput' id='stafftype' name='stafftype' value='" + stafftype + "'>"
+				+									"<option value = '' selected> Select a Type </option>"
 		+											"<option> Instructor </option>"
 		+											"<option> TA </option>"
 		+										"</select><br>"
