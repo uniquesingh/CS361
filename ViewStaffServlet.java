@@ -17,9 +17,17 @@ import edu.uwm.cs361.DemeritDatastoreService;;
 
 @SuppressWarnings("serial")
 public class ViewStaffServlet extends HttpServlet{
+	/*
+	 * Create a variable to call project servlet methods for HTTP
+	 * create insistence of datastore service 
+	 */
 	ProjectServlet page = new ProjectServlet();
 	DemeritDatastoreService data = new DemeritDatastoreService();
 	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -28,19 +36,26 @@ public class ViewStaffServlet extends HttpServlet{
 		page.menu(req,resp);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		
+		//get the value from the dropdown
 		String stafftype = req.getParameter("stafftype");
-		// TODO - add error if username is taken
-		//
+		
 		page.banner(req,resp);
 		page.layout(displayForm(req,resp,stafftype),req,resp);
 		page.menu(req,resp);
 		
 	}
 	
+	/*
+	 * display form will list all the information for the staff
+	 */
 	private String displayForm(HttpServletRequest req, HttpServletResponse resp, String staff) throws IOException
 	{
 		resp.setContentType("text/html");

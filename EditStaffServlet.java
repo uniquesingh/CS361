@@ -74,10 +74,15 @@ public class EditStaffServlet extends HttpServlet{
 		}
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		
+		//get all the inputs
 		String username = req.getParameter("username");
 		String password = req.getParameter("password");
 		String firstname = req.getParameter("firstname");
@@ -88,6 +93,7 @@ public class EditStaffServlet extends HttpServlet{
 
 		List<String> errors = new ArrayList<String>();
 
+		//check for the empty inputs
 		if(username != null ){
 			username = username.toLowerCase();
 			if (username.isEmpty()) {
@@ -107,21 +113,21 @@ public class EditStaffServlet extends HttpServlet{
 			}
 		}
 		
+		//any error, reprint the form
 		if (errors.size() > 0) {
 			page.banner(req,resp);
 			page.layout(displayForm(req,resp,errors,username),req,resp);
 			page.menu(req,resp);
 		} else {
-			//
-			// TODO - create user
-			//		
 			try {
+				//update the information for the user
 				String[] myS = {""};
 				data.updateStaff(username, firstname + " " +lastname, password, telephone, myS, myS, stafftype);
 			} catch (EntityNotFoundException ex) {
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
 			}
+			//update conformation form
 			String http = "";
 			
 			http += "<form id=\"ccf\" method=\"get\" action=\"/editStaff\">"
@@ -143,6 +149,10 @@ public class EditStaffServlet extends HttpServlet{
 		}
 	}
 	
+	/*
+	 * display form will get a list for errors 
+	 * print the form with errors.
+	 */
 	private String displayForm(HttpServletRequest req, HttpServletResponse resp, List<String> errors,String staff) throws IOException
 	{
 		resp.setContentType("text/html");

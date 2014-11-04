@@ -19,9 +19,17 @@ import edu.uwm.cs361.DemeritDatastoreService;;
 
 @SuppressWarnings("serial")
 public class CreateStaffServlet extends HttpServlet{
+	/*
+	 * Create a variable to call project servlet methods for HTTP
+	 * create insistence of datastore service 
+	 */
 	ProjectServlet page = new ProjectServlet();
 	DemeritDatastoreService data = new DemeritDatastoreService();
 	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -30,10 +38,15 @@ public class CreateStaffServlet extends HttpServlet{
 		page.menu(req,resp);
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		
+		// get all the parameter from the form
 		String username = req.getParameter("username");
 		username = username.toLowerCase();
 		String password = req.getParameter("password");
@@ -48,6 +61,7 @@ public class CreateStaffServlet extends HttpServlet{
 		
 		Query q = new Query(data.STAFF);
 		
+		//get all the staff and match the username if its exist 
 		List<Entity> users = dsNew.prepare(q).asList(FetchOptions.Builder.withDefaults());
 		boolean exist = true;
 		for(Entity user:users){
@@ -58,6 +72,7 @@ public class CreateStaffServlet extends HttpServlet{
 				}
 			}
 		}
+		//checking for blanks
 		if(exist){
 			if (username.isEmpty()) {
 				errors.add("Username is required.");
@@ -75,12 +90,14 @@ public class CreateStaffServlet extends HttpServlet{
 				errors.add("Staff Type is required.");
 			} 
 		}
+		//if there is any error then print the form again
 		if (errors.size() > 0) {
 			page.banner(req,resp);
 			page.layout(displayForm(req,resp,errors),req,resp);
 			page.menu(req,resp);
 		} else {	
 			try {
+				//create new staff with all the parameter
 				String[] myS = {""};
 				data.createStaff(username, firstname + " " +lastname, password, telephone, myS, myS, stafftype);
 			} catch (EntityNotFoundException ex) {
@@ -88,7 +105,7 @@ public class CreateStaffServlet extends HttpServlet{
 				ex.printStackTrace();
 			}
 			String http = "";
-			
+			//Staff created confirmation page.
 			http += "<form id=\"ccf\" method=\"GET\" action=\"/createStaff\">"
 			+			"<div id=\"title-create-staff\">"
 			+				"Staff Created Conformation"
@@ -108,6 +125,10 @@ public class CreateStaffServlet extends HttpServlet{
 		}
 	}
 	
+	/*
+	 * display form will get a list for errors 
+	 * print the form with errors.
+	 */
 	private String displayForm(HttpServletRequest req, HttpServletResponse resp, List<String> errors) throws IOException
 	{
 		resp.setContentType("text/html");

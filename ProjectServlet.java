@@ -16,13 +16,20 @@ import com.google.appengine.api.datastore.Query;
 @SuppressWarnings("serial")
 public class ProjectServlet extends HttpServlet {
 	
+	//constructor
 	public ProjectServlet(){};
 
 	DemeritDatastoreService data = new DemeritDatastoreService();
 	
+	/*
+	 * (non-Javadoc)
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
+		
+		//form to show the names of the staff in the system for now
 		String http = "";
 		http += "<form id=\"ccf\">"
 		+			"<div id=\"title-create-staff\">"
@@ -52,6 +59,9 @@ public class ProjectServlet extends HttpServlet {
 			throws IOException {
 	}
 	
+	/*
+	 * to create a banner for the page and include the CSS file
+	 */
 	public void banner(HttpServletRequest req, HttpServletResponse resp)throws IOException{
 		resp.setContentType("text/html");
 		
@@ -69,6 +79,9 @@ public class ProjectServlet extends HttpServlet {
 		+						"</div>");
 	}
 	
+	/*
+	 * takes a string which will create the Contents page
+	 */
 	public void layout(String http, HttpServletRequest req, HttpServletResponse resp)throws IOException{
 		resp.setContentType("text/html");
 		
@@ -79,6 +92,9 @@ public class ProjectServlet extends HttpServlet {
 		+							"</div>");
 	}
 	
+	/*
+	 * menu methods create the menu on side of the page
+	 */
 	public void menu(HttpServletRequest req, HttpServletResponse resp)throws IOException{
 		resp.setContentType("text/html");
 		resp.getWriter().println("<div class=\"menu\">");					
