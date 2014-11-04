@@ -50,12 +50,12 @@ public class EditStaffServlet extends HttpServlet{
 											http += "<option disabled>Instructor's</option>";		
 											for(Entity user:users){
 												if(!user.getProperty(data.TYPE).equals("TA"))
-														http += "<option>" + user.getProperty(data.NAME) + "</option>";
+														http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
 											}
 											http += "<option disabled>TA's</option>";
 											for(Entity user:users){
 												if(user.getProperty(data.TYPE).equals("TA"))
-													http += "<option>" + user.getProperty(data.NAME) + "</option>";
+													http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
 											}
 			http +=						"</select><br><br>"
 			+						"</td>"
@@ -79,7 +79,6 @@ public class EditStaffServlet extends HttpServlet{
 			throws IOException {
 		
 		String username = req.getParameter("username");
-		username = username.toLowerCase();
 		String password = req.getParameter("password");
 		String firstname = req.getParameter("firstname");
 		String lastname = req.getParameter("lastname");
@@ -88,26 +87,29 @@ public class EditStaffServlet extends HttpServlet{
 		String staff = req.getParameter("staff");
 
 		List<String> errors = new ArrayList<String>();
-		
-		if (username.isEmpty()) {
-			errors.add("Username is required.");
-		}
-		if (password.isEmpty()) {
-			errors.add("Password is required.");
-		} 
-		if (firstname.isEmpty()) {
-			errors.add("First is required.");
-		} 
-		if (lastname.isEmpty()) {
-			errors.add("Lastname is required.");
-		} 
-		if (stafftype.isEmpty()) {
-			errors.add("Staff Type is required.");
+
+		if(username != null ){
+			username = username.toLowerCase();
+			if (username.isEmpty()) {
+				errors.add("Username is required.");
+			}
+			if (password.isEmpty()) {
+				errors.add("Password is required.");
+			} 
+			if (firstname.isEmpty()) {
+				errors.add("First is required.");
+			} 
+			if (lastname.isEmpty()) {
+				errors.add("Lastname is required.");
+			} 
+			if (stafftype.isEmpty()) {
+				errors.add("Staff Type is required.");
+			}
 		}
 		
 		if (errors.size() > 0) {
 			page.banner(req,resp);
-			page.layout(displayForm(req,resp,errors,staff),req,resp);
+			page.layout(displayForm(req,resp,errors,username),req,resp);
 			page.menu(req,resp);
 		} else {
 			//
@@ -164,19 +166,19 @@ public class EditStaffServlet extends HttpServlet{
 										http += "<option disabled>Instructor's</option>";		
 										for(Entity user:users){
 											if(!user.getProperty(data.TYPE).equals("TA"))
-													http += "<option>" + user.getProperty(data.NAME) + "</option>";
+													http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
 										}
 										http += "<option disabled>TA's</option>";
 										for(Entity user:users){
 											if(user.getProperty(data.TYPE).equals("TA"))
-												http += "<option>" + user.getProperty(data.NAME) + "</option>";
+												http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
 										}
 		http +=						"</select><br><br>"
 		+						"</td>"
 		+					"</tr>";
 		
 		for(Entity user:users){
-			if(user.getProperty(data.NAME).equals(staff)){
+			if(user.getProperty(data.EMAIL).equals(staff)){
 				if (errors.size() > 0) {
 					http += "<tr><td><ul class='errors'>";
 

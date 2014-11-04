@@ -24,17 +24,6 @@ public class EditStaffContactServlet extends HttpServlet{
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		
-		/*
-		 * REMOVE THIS
-		 */
-		try {
-			if(!data.hasDuplicate(data.STAFF, "test@test.com"))
-				data.createStaff("test@test.com", "testDude", "password", "1234567890", null, null, data.STAFF);
-		} catch (EntityNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 		Query q = new Query(data.STAFF);
 		List<Entity> users = ds.prepare(q).asList(FetchOptions.Builder.withDefaults());
 		String http = "";
