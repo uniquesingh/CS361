@@ -13,6 +13,10 @@ public class DemeritDatastoreService {
 	public final String STAFF = "staff";
 	public final String EMAIL = "email";
 	public final String OFFICE = "officeHours";
+	public final String OFFICE_LOC = "office";
+	public final String OFFICE_PHONE = "officePhone";
+	public final String HOME_ADDRESS = "address";
+	public final String HOME_PHONE = "homePhone";
 	public final String PASSWORD = "password";
 	public final String TELEPHONE = "telephone";
 	
@@ -31,7 +35,7 @@ public class DemeritDatastoreService {
 	
 	private final String DELIMITER = "~";
 	
-	public DatastoreService ds = DatastoreServiceFactory.getDatastoreService();;
+	private DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 	
 	/**
 	 * Constructor for DemeritDatastoreService
@@ -68,11 +72,11 @@ public class DemeritDatastoreService {
 	 * 
 	 * @postcondition Staff will be an entity in datastore.
 	 */
-	public void createStaff(String email, String name, String password, String telephone, String[] courseNumSectionNum, String[] officeHours, String type) throws EntityNotFoundException
+	public void createStaff(String email, String name, String password, String telephone,String[] courseNumSectionNum, String[] officeHours, String type) throws EntityNotFoundException
 	{
 		
-		String cNSN = makeDelString(courseNumSectionNum);
-		String oH = makeDelString(officeHours);
+		//String cNSN = makeDelString(courseNumSectionNum);
+		//String oH = makeDelString(officeHours);
 		
 		Entity newStaff = new Entity(STAFF,email);
 		newStaff.setProperty(EMAIL, email);
@@ -81,19 +85,22 @@ public class DemeritDatastoreService {
 		newStaff.setProperty(TYPE, type);
 		newStaff.setProperty(NAME,name);
 		
-		if(courseNumSectionNum != null)
-			newStaff.setProperty(COURSE_AND_SECTION,cNSN);
-		else
-			newStaff.setProperty(COURSE_AND_SECTION,"");
+		String newCourseSection = "";
+	    if (courseNumSectionNum != null && courseNumSectionNum[0] != "")
+	    	newCourseSection = makeDelString(courseNumSectionNum);
+	    
+	    String newOfficeHours = "";
+	    if (officeHours != null && officeHours[0] != "")
+	    	newOfficeHours = makeDelString(officeHours);
 		
-		if(officeHours != null)
-			newStaff.setProperty(OFFICE,oH);
-		else
-			newStaff.setProperty(OFFICE,"");
+		newStaff.setProperty(OFFICE_LOC, "");
+		newStaff.setProperty(OFFICE_PHONE, "");
+		newStaff.setProperty(HOME_ADDRESS, "");
+		newStaff.setProperty(HOME_PHONE, "");
 		
 		ds.put(newStaff);
 		
-		if(!(cNSN.equals("") || courseNumSectionNum == null))
+		if(!(newCourseSection.equals("") || courseNumSectionNum == null))
 			addStaffToSection(courseNumSectionNum, email);
 		
 	}
@@ -229,9 +236,14 @@ public class DemeritDatastoreService {
 			    employee.setProperty(TYPE, type);
 			    employee.setProperty(PASSWORD, password);
 			    employee.setProperty(TELEPHONE, telephone);
-			     
-			    String newCourseSection = makeDelString(courseNumSectionNum);
-			    String newOfficeHours = makeDelString(officeHours);
+			    
+			    String newCourseSection = "";
+			    if (courseNumSectionNum != null && courseNumSectionNum[0] != "")
+			    	newCourseSection = makeDelString(courseNumSectionNum);
+			    
+			    String newOfficeHours = "";
+			    if (officeHours != null && officeHours[0] != "")
+			    	newOfficeHours = makeDelString(officeHours);
 				    
 				employee.setProperty(COURSE_AND_SECTION, newCourseSection);
 				employee.setProperty(OFFICE, newOfficeHours);
@@ -253,6 +265,46 @@ public class DemeritDatastoreService {
 	}
 	
 	/**
+	 * updateStaffContact
+	 * 
+	 * Adds or updates staff contact info. Staff must already exist
+	 * 
+	 * @param email String representing staff's email address
+	 * @param officeLocation String containing office building and room number
+	 * @param officePhone String representing staff's office phone number
+	 * @param homeAddress String representing staff's home address
+	 * @param homePhone String representing staff's home telephone number
+	 * 
+	 * @throws EntityNotFoundException Throws exception if email not found(staff doesnt exist)
+	 */
+	public void updateStaffContact(String email, String officeLocation, String officePhone, String homeAddress, String homePhone) throws EntityNotFoundException 
+	{
+
+			Transaction txn = ds.beginTransaction();
+			try {
+			    Key employeeKey = KeyFactory.createKey(STAFF, email);
+			    Entity employee = ds.get(employeeKey);
+  
+			    employee.setProperty(OFFICE_LOC, officeLocation);
+			    employee.setProperty(OFFICE_PHONE, officePhone);
+			    employee.setProperty(HOME_ADDRESS, homeAddress);
+			    employee.setProperty(HOME_PHONE, homePhone);
+				
+				ds.put(employee);
+				txn.commit();
+			} 
+				
+			finally {
+				if (txn.isActive()) {
+					txn.rollback();
+				}
+			}
+		
+
+	}
+	
+	
+	/**
 	 * hasNoDuplicate
 	 * 
 	 * Returns true if there is no duplicate of the passed key within the datastore, false otherwise.
@@ -269,17 +321,22 @@ public class DemeritDatastoreService {
 	 */
 	public boolean hasDuplicate(String entityType, String myKey){
 		
+		Entity lookingFor = null;
 		Transaction txn = ds.beginTransaction();
+		
 		try {
+			
 		    Key entityKey = KeyFactory.createKey(entityType, myKey);
-		    @SuppressWarnings("unused")
-			Entity lookingFor = ds.get(entityKey);
+		    lookingFor = ds.get(entityKey);
+		    
 		} catch (EntityNotFoundException e) {
-		    return false;
 		}
 		txn.commit();
 		
-		return true;
+		if(lookingFor == null)
+			return false;
+		else
+			return true;
 	}
 	
 	
