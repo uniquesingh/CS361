@@ -69,12 +69,12 @@ public class ViewStaffServlet extends HttpServlet{
 										http += "<option disabled>Instructor's</option>";		
 										for(Entity user:users){
 											if(!user.getProperty(data.TYPE).equals("TA"))
-													http += "<option>" + user.getProperty(data.NAME) + "</option>";
+													http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
 										}
 										http += "<option disabled>TA's</option>";
 										for(Entity user:users){
 											if(user.getProperty(data.TYPE).equals("TA"))
-												http += "<option>" + user.getProperty(data.NAME) + "</option>";
+												http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
 										}
 		http +=						"</select>"
 		+						"</td>"
@@ -87,7 +87,7 @@ public class ViewStaffServlet extends HttpServlet{
 		+				"</tr>";
 		
 		for(Entity user:users){
-			if(user.getProperty(data.NAME).equals(stafftype)){					
+			if(user.getProperty(data.EMAIL).equals(stafftype)){					
 				http+=	"<tr>"
 				+			"<td class='view-staff'>"
 				+				"Name:<br>"
