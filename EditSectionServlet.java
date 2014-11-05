@@ -23,8 +23,6 @@ public class EditSectionServlet extends HttpServlet {
 	DemeritDatastoreService data = new DemeritDatastoreService();
 	DatastoreService ds = data.getDatastore();
 
-	private String time;
-
 	@Override
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
@@ -93,7 +91,7 @@ public class EditSectionServlet extends HttpServlet {
 
 		String staff = req.getParameter("staff");
 		String mainKey = req.getParameter("mainKey");
-		System.out.println("staff: " + staff + "KEy: " + mainKey);
+		//System.out.println("staff: " + staff + "KEy: " + mainKey);
 		
 		Entity sectionEn = null;
 		try {
@@ -107,6 +105,7 @@ public class EditSectionServlet extends HttpServlet {
 		String lecLabDis = sectionEn.getProperty(data.TYPE).toString();
 		String sectionNumber = mainKey.substring(4);
 		String room = sectionEn.getProperty(data.ROOM).toString();
+		String time = sectionEn.getProperty(data.TIME).toString();
 		
 		List<String> errors = new ArrayList<String>();
 
@@ -125,7 +124,7 @@ public class EditSectionServlet extends HttpServlet {
 
 				data.updateSection(courseNumber, days, lecLabDis, sectionNumber, room, staff, time);
 				e = data.getSection(mainKey);
-				System.out.println(e.toString());
+				//System.out.println(e.toString());
 
 			} catch (EntityNotFoundException ex) {
 				// TODO Auto-generated catch block
@@ -156,14 +155,14 @@ public class EditSectionServlet extends HttpServlet {
 			HttpServletResponse resp, List<String> errors, String mainKey)
 			throws IOException {
 
-		System.out.println(mainKey);
+		//System.out.println(mainKey);
 
 		String[] temp = mainKey.split(" - ");
 		String[] temp2 = temp[1].split(" ");
 		mainKey = temp[0] + " " + temp2[1];
 		mainKey = mainKey.substring(2);
 
-		System.out.println(mainKey);
+		//System.out.println(mainKey);
 
 
 		resp.setContentType("text/html");

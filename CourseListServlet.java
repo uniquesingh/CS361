@@ -61,7 +61,7 @@ public class CourseListServlet extends HttpServlet{
 					for(int i = 0; i < sListArr.length; ++i) {
 						//System.out.println(""+sListArr[i]);
 						Entity sEnt = ds.getSection(ds.getOurKey(courseEnt.getKey()) + " " + sListArr[i].replaceAll("~", ""));
-						System.out.println(sEnt.toString());
+						//System.out.println(sEnt.toString());
 						sectionList.add(new Section(sEnt));
 					}
 					

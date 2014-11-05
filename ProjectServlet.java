@@ -181,7 +181,7 @@ public class ProjectServlet extends HttpServlet {
 //		resp.getWriter().println("			</li>");
 //		resp.getWriter().println("		</ul>");
 		resp.getWriter().println("		<ul class=\"buttons-outline\">");
-		resp.getWriter().println("			<li> <a href=\"Index.html\">Logout</a></li>");
+		resp.getWriter().println("			<li> <a href=\"index.html\">Logout</a></li>");
 		resp.getWriter().println("		</ul>");
 		resp.getWriter().println("	</div>");
 		resp.getWriter().println("</div>");
