@@ -1,14 +1,12 @@
 package edu.uwm.cs361;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.*;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query;
 
@@ -84,12 +82,12 @@ public class ViewStaffServlet extends HttpServlet{
 										http += "<option disabled>Instructor's</option>";		
 										for(Entity user:users){
 											if(!user.getProperty(data.TYPE).equals("TA"))
-													http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
+												http += "<option>" + data.getOurKey(user.getKey()) + "</option>";
 										}
 										http += "<option disabled>TA's</option>";
 										for(Entity user:users){
 											if(user.getProperty(data.TYPE).equals("TA"))
-												http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
+												http += "<option>" + data.getOurKey(user.getKey()) + "</option>";
 										}
 		http +=						"</select>"
 		+						"</td>"
@@ -101,22 +99,29 @@ public class ViewStaffServlet extends HttpServlet{
 		+					"</td>"
 		+				"</tr>";
 		
+		System.out.println(stafftype);
 		for(Entity user:users){
-			if(user.getProperty(data.EMAIL).equals(stafftype)){					
+			if(data.getOurKey(user.getKey()).equals(stafftype)){					
 				http+=	"<tr>"
 				+			"<td class='view-staff'>"
 				+				"Name:<br>"
 				+				"Username:<br>"
 				+				"Password:<br>"
-				+				"Telephone:<br>"
 				+				"Staff Type:<br>"
+				+				"Office:<br>"
+				+				"Office Phone:<br>"
+				+				"Address:<br>"
+				+				"Home Phone:<br>"
 				+			"</td>"
 				+			"<td class='view-staff-result'>"
 				+				user.getProperty(data.NAME) + "<br>"
-				+				user.getProperty(data.EMAIL) + "<br>"
+				+				data.getOurKey(user.getKey()) + "<br>"
 				+				user.getProperty(data.PASSWORD) + "<br>"
-				+				user.getProperty(data.TELEPHONE) + "<br>"
+				+				user.getProperty(data.OFFICE_PHONE) + "<br>"
 				+				user.getProperty(data.TYPE) + "<br>"
+				+				user.getProperty(data.OFFICE_LOCATION) + "<br>"
+				+				user.getProperty(data.HOME_ADDRESS) + "<br>"
+				+				user.getProperty(data.HOME_PHONE) + "<br>"
 				+			"</td>"
 				+		"</tr>";
 			}

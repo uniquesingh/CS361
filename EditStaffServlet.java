@@ -6,9 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.*;
 
-import com.google.appengine.api.datastore.BaseDatastoreService;
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
@@ -50,12 +48,12 @@ public class EditStaffServlet extends HttpServlet{
 											http += "<option disabled>Instructor's</option>";		
 											for(Entity user:users){
 												if(!user.getProperty(data.TYPE).equals("TA"))
-														http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
+														http += "<option>" + data.getOurKey(user.getKey()) + "</option>";
 											}
 											http += "<option disabled>TA's</option>";
 											for(Entity user:users){
 												if(user.getProperty(data.TYPE).equals("TA"))
-													http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
+													http += "<option>" + data.getOurKey(user.getKey()) + "</option>";
 											}
 			http +=						"</select><br><br>"
 			+						"</td>"
@@ -89,16 +87,12 @@ public class EditStaffServlet extends HttpServlet{
 		String lastname = req.getParameter("lastname");
 		String telephone = req.getParameter("telephone");
 		String stafftype = req.getParameter("stafftype");
-		String staff = req.getParameter("staff");
 
 		List<String> errors = new ArrayList<String>();
 
 		//check for the empty inputs
 		if(username != null ){
 			username = username.toLowerCase();
-			if (username.isEmpty()) {
-				errors.add("Username is required.");
-			}
 			if (password.isEmpty()) {
 				errors.add("Password is required.");
 			} 
@@ -122,7 +116,7 @@ public class EditStaffServlet extends HttpServlet{
 			try {
 				//update the information for the user
 				String[] myS = {""};
-				data.updateStaff(username, firstname + " " +lastname, password, telephone, myS, myS, stafftype);
+				data.updateStaff(username, firstname + " " +lastname, password, telephone, myS, stafftype);
 			} catch (EntityNotFoundException ex) {
 				// TODO Auto-generated catch block
 				ex.printStackTrace();
@@ -166,29 +160,29 @@ public class EditStaffServlet extends HttpServlet{
 		+			"<div id=\"title-create-staff\">"
 		+				"Edit Staff"
 		+			"</div>"
-		+			"<div id=\"sub\">"
-		+				"<table>"
-		+					"<tr>"
-		+						"<td class='form'>"
-		+							"Staff:"
-		+							"<select id='staff' name='staff' class='staff-select'>"
-		+									"<option value = '' selected> Select a Person </option>";
-										http += "<option disabled>Instructor's</option>";		
-										for(Entity user:users){
-											if(!user.getProperty(data.TYPE).equals("TA"))
-													http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
-										}
-										http += "<option disabled>TA's</option>";
-										for(Entity user:users){
-											if(user.getProperty(data.TYPE).equals("TA"))
-												http += "<option>" + user.getProperty(data.EMAIL) + "</option>";
-										}
-		http +=						"</select><br><br>"
-		+						"</td>"
-		+					"</tr>";
+		+			"<div id=\"sub\">";
+//		+				"<table>"
+//		+					"<tr>"
+//		+						"<td class='form'>"
+//		+							"Staff:"
+//		+							"<select id='staff' name='staff' class='staff-select'>"
+//		+									"<option value = '' selected> Select a Person </option>";
+//										http += "<option disabled>Instructor's</option>";		
+//										for(Entity user:users){
+//											if(!user.getProperty(data.TYPE).equals("TA"))
+//													http += "<option>" + data.getOurKey(user.getKey()) + "</option>";
+//										}
+//										http += "<option disabled>TA's</option>";
+//										for(Entity user:users){
+//											if(user.getProperty(data.TYPE).equals("TA"))
+//												http += "<option>" + data.getOurKey(user.getKey()) + "</option>";
+//										}
+//		http +=						"</select><br><br>"
+//		+						"</td>"
+//		+					"</tr>";
 		
 		for(Entity user:users){
-			if(user.getProperty(data.EMAIL).equals(staff)){
+			if(data.getOurKey(user.getKey()).equals(staff)){
 				if (errors.size() > 0) {
 					http += "<tr><td><ul class='errors'>";
 
@@ -202,11 +196,11 @@ public class EditStaffServlet extends HttpServlet{
 
 				http+=				"<tr>"
 				+						"<td class=\"form\">"
-				+							"Username *: <input readonly class='createStaffInput' type=\"text\" id='username' name='username' value='" + user.getProperty(data.EMAIL) + "'/><br>"
+				+							"Username *: <input readonly class='createStaffInput' type=\"text\" id='username' name='username' value='" + data.getOurKey(user.getKey()) + "'/><br>"
 				+							"Password *: <input class='createStaffInput' type=\"password\" id='password' name='password' value='" + user.getProperty(data.PASSWORD) + "'/><br>"
 				+							"First Name *: <input class='createStaffInput' type=\"text\" id='firstname' name='firstname' value='" + na[0].toString() + "'/><br>"
 				+							"Last Name *: <input class='createStaffInput' type=\"text\" id='lastname' name='lastname' value='" + na[1].toString() + "'/><br>"
-				+							"Telephone: <input class='createStaffInput' type=\"text\" id='telephone' name='telephone' value='" + user.getProperty(data.TELEPHONE) + "'/><br>"
+				+							"Telephone: <input class='createStaffInput' type=\"text\" id='telephone' name='telephone' value='" + user.getProperty(data.HOME_PHONE) + "'/><br>"
 				+							"Staff Type: <select class='staff-select createStaffInput' id='stafftype' name='stafftype' value='" + user.getProperty(data.TYPE) + "'>"
 				+											"<option value = '' selected> Select a Type </option>"
 				+											"<option> Instructor </option>"

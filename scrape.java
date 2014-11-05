@@ -6,13 +6,28 @@ import java.util.ArrayList;
 import java.util.regex.*;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
 
 import edu.uwm.cs361.DemeritDatastoreService;
 
-public class scrape {
-	// TODO should make it, ya know, non static.
-	// i'll get to that once i understand this html junk and can
-	// call it with a button from a web page
+public class Scrape {
+	/////////////////////////////////////
+	// call this from a web call or something
+	public static void main(String[] args){
+		getCourseListandStore();
+	}
+	public static void getCourseListandStore(){
+		try{
+			ArrayList<Course> c = getURL("http://www4.uwm.edu/schedule/index.cfm?a1=subject_details&subject=COMPSCI&strm=2152");
+//			System.out.println(c);
+			commitCourses(c);
+		} catch (IOException e){ 
+			e.printStackTrace(); 
+		}
+		
+	}
+	
 	//////////////////////////////////////////////////////////////
 	// wget
 	private static ArrayList<Course> getURL(String url) throws IOException {
@@ -45,17 +60,19 @@ public class scrape {
 		ArrayList<Course> c = new ArrayList<Course>();
 		while (matcher.find()){
 			String g = matcher.group();
-			c.add(new Course(slurpDesignation(g),slurpTitle(g),processSections(g)));
+			Course cour = new Course(slurpDesignation(g),slurpTitle(g),null);
+			cour.setSections(processSections(cour,g));
+			c.add(cour);
 		}
 		return c;
 	}
-	private static ArrayList<Section> processSections(String text){
+	private static ArrayList<Section> processSections(Course c, String text){
 		ArrayList<Section> s = new ArrayList<Section>();
 		// the only thing iterations are good for is making it difficult to
 		// write in a functional style
 		for(String str : getSections(text)){
 			try{
-				s.add(new Section(slurpUnits(str), slurpSecDesignation(str), 
+				s.add(new Section(c, slurpUnits(str), slurpSecDesignation(str), 
 					slurpHours(str), slurpDays(str), slurpDates(str), 
 					slurpInstructor(str), slurpRoom(str)));
 			}catch(Exception e){
@@ -122,10 +139,7 @@ public class scrape {
 		return slurper(text, "(?<=\\d{5}).*?(?=\\s{3})").trim();
 	}
 	private static String slurpDays(String text){
-		String s = slurper(text,"(?<=-).*?(?=\\d{2}\\/)");
-		if(s.trim().isEmpty())
-			return "";
-		return slurper(s,"(?<=M).*").trim();
+		return slurper(text,"(?<=\\s)[MTWRF\\-]{1,5}(?=\\s)");
 	}
 	private static String slurpDates(String text){
 		return slurper(text,"\\d{2}/\\d{2}-\\d{2}/\\d{2}");
@@ -146,57 +160,18 @@ public class scrape {
 		// regex a best
 	}
 	
-	/////////////////////////////////////////
-	// main (obviously)
-	public static void main(String[] args){
-		try {
-			getURL("http://www4.uwm.edu/schedule/index.cfm?a1=subject_details&subject=COMPSCI&strm=2152");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	private void commitCourses(ArrayList<Course> courses){
+	private static void commitCourses(ArrayList<Course> courses){
 		DemeritDatastoreService ds = new DemeritDatastoreService();
 		for(Course c : courses){
 			if( ! ds.hasDuplicate(ds.COURSE, c.getNumber()) ){
 				// most of these are attributes of the section, not course
-				Section s = c.getSections().get(0);
 				try {
-					ds.createCourse(
-							s.getInstructor(), c.getNumber(), s.getNumber(), 
-							s.getUnits(), s.getDays(), s.getType(), s.getRoom(), 
-							"", // staffEmail. don't have a way to derive this from scraping 
-							s.getHours());
+//					Query q = new Query(ds.STAFF).setFilter(new Filter(ds.NAME,c.sections.get(0).getInstructor()));
+					ds.createCourse(c);
 				} catch (EntityNotFoundException e) {
 					e.printStackTrace(); // throw it onto the user's lap
 				}
-				
-				// can't use s here for Section?
-				// why doesn't it just shadow the other one?
-				// java why
-				for(Section se : c.getSections()){
-					if( ! ds.hasDuplicate(ds.SECTION, se.getNumber() + " " + c.getNumber())){
-						try {
-							ds.createSection(c.getNumber(), se.getDays(), 
-									se.getType(), se.getNumber(), 
-									se.getRoom(), 
-									"", // staffEmail. same as above 
-									se.getHours());
-						} catch (EntityNotFoundException e) {
-							e.printStackTrace();
-						}
-						}
-					}
-				}
 			}
 		}
-	public void getCourseList(){
-		try{
-			ArrayList<Course> c = getURL("http://www4.uwm.edu/schedule/index.cfm?a1=subject_details&subject=COMPSCI&strm=2152");
-		} catch (IOException e){ e.printStackTrace(); }
-		
 	}
-	
 }

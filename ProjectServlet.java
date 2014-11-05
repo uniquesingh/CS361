@@ -8,7 +8,6 @@ import javax.servlet.http.*;
 import edu.uwm.cs361.DemeritDatastoreService;
 
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Query;
@@ -59,6 +58,7 @@ public class ProjectServlet extends HttpServlet {
 			throws IOException {
 	}
 	
+	
 	/*
 	 * to create a banner for the page and include the CSS file
 	 */
@@ -93,6 +93,19 @@ public class ProjectServlet extends HttpServlet {
 	}
 	
 	/*
+	 * takes a string which will create the Contents page
+	 */
+	public void courseListLayout(String http, HttpServletRequest req, HttpServletResponse resp)throws IOException{
+		resp.setContentType("text/html");
+		
+		resp.getWriter().println("<div class=\"courselayout background-style\">"
+		+							"	<div class=\"page-after-banner\">"
+		+									http
+		+							"	</div>"
+		+							"</div>");
+	}
+	
+	/*
 	 * menu methods create the menu on side of the page
 	 */
 	public void menu(HttpServletRequest req, HttpServletResponse resp)throws IOException{
@@ -103,20 +116,20 @@ public class ProjectServlet extends HttpServlet {
 		resp.getWriter().println("			<li> <a href=\"/project\"> Home</a></li>");
 		resp.getWriter().println("		</ul>");
 		resp.getWriter().println("		<ul class=\"buttons-outline\">");
-		resp.getWriter().println("			<li id=\"b1\"> <a href=\"#\">Admin</a>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"adminQueuryPage.html\"> Admin Query</a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"contactPageAdmin.html\"> Staff Contacts</a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("			</li>");
+		resp.getWriter().println("			<li> <a href=\"/scrape\"> Scrape</a></li>");
 		resp.getWriter().println("		</ul>");
+//		resp.getWriter().println("		<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("			<li id=\"b1\"> <a href=\"#\">Admin</a>");
+//		resp.getWriter().println("				<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("					<li><a href=\"/project\"> Admin Query</a></li>");
+//		resp.getWriter().println("				</ul>");
+//		resp.getWriter().println("				<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("					<li><a href=\"/project\"> Staff Contacts</a></li>");
+//		resp.getWriter().println("				</ul>");
+//		resp.getWriter().println("			</li>");
+//		resp.getWriter().println("		</ul>");
 		resp.getWriter().println("		<ul class=\"buttons-outline\">");
 		resp.getWriter().println("			<li> <a href=\"#\">Staff</a>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"Staff_Home_Page.html\"> Staff Home </a></li>");
-		resp.getWriter().println("				</ul>");
 		resp.getWriter().println("				<ul class=\"buttons-outline\">");
 		resp.getWriter().println("					<li><a href=\"/createStaff\"> Create Staff</a></li>");
 		resp.getWriter().println("				</ul>");
@@ -127,51 +140,48 @@ public class ProjectServlet extends HttpServlet {
 		resp.getWriter().println("					<li><a href=\"/viewStaff\"> View Staff</a></li>");
 		resp.getWriter().println("				</ul>");
 		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"staffListPage.html\">Staff List</a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"staffOfficePageAdmin.html\"> Staff Office</a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("			</li>");
-		resp.getWriter().println("		</ul>");
-		resp.getWriter().println("		<ul class=\"buttons-outline\">");
-		resp.getWriter().println("			<li> <a href=\"#\">Instructor</a>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"staffListPage.html\"> TA's List </a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"Edit_Course_InstructorView_Page.html\"> Assign TA's</a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("			</li>");
-		resp.getWriter().println("		</ul>");
-		resp.getWriter().println("		<ul class=\"buttons-outline\">");
-		resp.getWriter().println("			<li> <a href=\"#\"> Course</a>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"courseCreate.html\"> Create Course</a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"Edit_Course_AdminView_Page.html\"> Edit Course</a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href=\"courseView.html\"> View Course</a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("			</li>");
-		resp.getWriter().println("		</ul>");
-		resp.getWriter().println("		<ul class=\"buttons-outline\">");
-		resp.getWriter().println("			<li> <a href=\"staffOfficePage.html\"> My Office Hours</a></li>");
-		resp.getWriter().println("		</ul>");
-		resp.getWriter().println("		<ul class=\"buttons-outline\">");
-		resp.getWriter().println("			<li> <a href=\"#\"> My Contact</a>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
-		resp.getWriter().println("					<li><a href='/myContact'> Contact</a></li>");
-		resp.getWriter().println("				</ul>");
-		resp.getWriter().println("				<ul class=\"buttons-outline\">");
 		resp.getWriter().println("					<li><a href='/editStaffContact'> Edit Staff Contact</a></li>");
 		resp.getWriter().println("				</ul>");
 		resp.getWriter().println("			</li>");
 		resp.getWriter().println("		</ul>");
+//		resp.getWriter().println("		<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("			<li> <a href=\"#\">Instructor</a>");
+//		resp.getWriter().println("				<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("					<li><a href=\"/project\"> TA's List </a></li>");
+//		resp.getWriter().println("				</ul>");
+//		resp.getWriter().println("				<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("					<li><a href=\"/project\"> Assign TA's</a></li>");
+//		resp.getWriter().println("				</ul>");
+//		resp.getWriter().println("			</li>");
+//		resp.getWriter().println("		</ul>");
 		resp.getWriter().println("		<ul class=\"buttons-outline\">");
-		resp.getWriter().println("			<li> <a href=\"login.html\">Logout</a></li>");
+		resp.getWriter().println("			<li> <a href=\"#\"> Course</a>");
+//		resp.getWriter().println("				<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("					<li><a href=\"/createCourse\"> Create Course</a></li>");
+//		resp.getWriter().println("				</ul>");
+		resp.getWriter().println("				<ul class=\"buttons-outline\">");
+		resp.getWriter().println("					<li><a href=\"/courseList\">Course List</a></li>");
+		resp.getWriter().println("				</ul>");
+//		resp.getWriter().println("				<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("					<li><a href=\"/project\"> Edit Course</a></li>");
+//		resp.getWriter().println("				</ul>");
+		resp.getWriter().println("				<ul class=\"buttons-outline\">");
+		resp.getWriter().println("					<li><a href=\"/editSection\"> Edit Section</a></li>");
+		resp.getWriter().println("				</ul>");
+		resp.getWriter().println("			</li>");
+		resp.getWriter().println("		</ul>");
+//		resp.getWriter().println("		<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("			<li> <a href=\"/project\"> My Office Hours</a></li>");
+//		resp.getWriter().println("		</ul>");
+//		resp.getWriter().println("		<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("			<li> <a href=\"#\"> My Contact</a>");
+//		resp.getWriter().println("				<ul class=\"buttons-outline\">");
+//		resp.getWriter().println("					<li><a href='/myContact'> Contact</a></li>");
+//		resp.getWriter().println("				</ul>");
+//		resp.getWriter().println("			</li>");
+//		resp.getWriter().println("		</ul>");
+		resp.getWriter().println("		<ul class=\"buttons-outline\">");
+		resp.getWriter().println("			<li> <a href=\"Index.html\">Logout</a></li>");
 		resp.getWriter().println("		</ul>");
 		resp.getWriter().println("	</div>");
 		resp.getWriter().println("</div>");

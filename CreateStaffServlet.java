@@ -6,9 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.*;
 
-import com.google.appengine.api.datastore.BaseDatastoreService;
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
@@ -99,7 +97,7 @@ public class CreateStaffServlet extends HttpServlet{
 			try {
 				//create new staff with all the parameter
 				String[] myS = {""};
-				data.createStaff(username, firstname + " " +lastname, password, telephone, myS, myS, stafftype);
+				data.createStaff(username, firstname + " " +lastname, password, telephone, myS, stafftype);
 			} catch (EntityNotFoundException ex) {
 				// TODO Auto-generated catch block
 				ex.printStackTrace();

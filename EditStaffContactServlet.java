@@ -3,12 +3,10 @@ package edu.uwm.cs361;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import edu.uwm.cs361.DemeritDatastoreService;
+
 import javax.servlet.http.*;
 
-import com.google.appengine.api.datastore.BaseDatastoreService;
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
@@ -24,6 +22,7 @@ public class EditStaffContactServlet extends HttpServlet{
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		
+		
 		Query q = new Query(data.STAFF);
 		List<Entity> users = ds.prepare(q).asList(FetchOptions.Builder.withDefaults());
 		String http = "";
@@ -34,7 +33,7 @@ public class EditStaffContactServlet extends HttpServlet{
 			page.banner(req,resp);
 			http += "<form id=\"ccf\" method=\"GET\" action=\"/editStaffContact\">"
 			+			"<div id=\"title-create-staff\">"
-			+				"Edit Staff"
+			+				"Edit Staff Contact"
 			+			"</div>"
 			+			"<div id=\"sub\">"
 			+				"<table>"
@@ -45,12 +44,13 @@ public class EditStaffContactServlet extends HttpServlet{
 											http += "<option disabled>Instructor's</option>";		
 											for(Entity user:users){
 												if(!user.getProperty(data.TYPE).equals("TA"))
-														http += "<option>" + user.getProperty(data.NAME) + "</option>";
+														http += "<option>" + data.getOurKey(user.getKey()) + "</option>";
+														
 											}
 											http += "<option disabled>TA's</option>";
 											for(Entity user:users){
 												if(user.getProperty(data.TYPE).equals("TA"))
-													http += "<option>" + user.getProperty(data.NAME) + "</option>";
+													http += "<option>" + data.getOurKey(user.getKey()) + "</option>";
 											}
 			http +=						"</select><br><br>"
 			+						"</td>"
@@ -64,7 +64,7 @@ public class EditStaffContactServlet extends HttpServlet{
 		}
 		else{
 			page.banner(req,resp);
-			page.layout(displayForm(req,resp, new ArrayList<String>()), req, resp);
+			page.layout(displayForm(req,resp, new ArrayList<String>(), staff), req, resp);
 			page.menu(req,resp);
 		}
 	}
@@ -72,7 +72,9 @@ public class EditStaffContactServlet extends HttpServlet{
 	@Override
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
+
 		
+		String toEditEmail = req.getParameter("staff");
 		String officePhone = req.getParameter("officePhone");
 		String office = req.getParameter("office");
 		String homeAddress = req.getParameter("homeAddress");
@@ -82,24 +84,17 @@ public class EditStaffContactServlet extends HttpServlet{
 		
 		if (officePhone == null)
 			officePhone = "";
-		if (office == null || office == "")
+		if (office == null)
 			office = "";
 		if (homeAddress == null)
 			homeAddress = "";
 		if (homePhone == null)
 			homePhone = "";
-		
-
-		Query q = new Query(data.STAFF);
-		DatastoreService dsQ =  data.getDatastore();
-		List<Entity> users = dsQ.prepare(q).asList(FetchOptions.Builder.withDefaults());
-		Entity toUpdate = users.get(0);
-		String toUpdateEmail = data.getOurKey(toUpdate.getKey());
 
 		
 		if (errors.size() > 0) {
 			page.banner(req,resp);
-			page.layout(displayForm(req,resp,errors),req,resp);
+			page.layout(displayForm (req,resp,errors, toEditEmail),req,resp);
 			page.menu(req,resp);
 		} else {
 	
@@ -107,8 +102,8 @@ public class EditStaffContactServlet extends HttpServlet{
 			
 			try {
 				
-				data.updateStaffContact(toUpdateEmail, office, officePhone, homeAddress, homePhone);
-				e = data.getStaff(toUpdateEmail);
+				data.updateStaffContact(toEditEmail, office, officePhone, homeAddress, homePhone);
+				e = data.getStaff(toEditEmail);
 				
 			} catch (EntityNotFoundException ex) {
 				// TODO Auto-generated catch block
@@ -119,10 +114,10 @@ public class EditStaffContactServlet extends HttpServlet{
 			
 			http += "<form id=\"ccf\" method=\"GET\" action=\"/editStaffContact\">"
 			+			"<div id=\"title-create-staff\">"
-			+				"Edit Contact info: " + users.get(0).getProperty(data.NAME).toString()
+			+				"Edit Contact info: " + req.getParameter("staff")
 			+			"</div>"
 			+ 			"<div id=\"sub\">"
-			+				"Office: " + e.getProperty(data.OFFICE_LOC) + "<br>" 
+			+				"Office: " + e.getProperty(data.OFFICE_LOCATION) + "<br>" 
 			+				"Office Phone: " + e.getProperty(data.OFFICE_PHONE) + "<br>" 
 			+				"Home Address: " + e.getProperty(data.HOME_ADDRESS) + "<br><br>" 
 			+				"Home Phone: " + e.getProperty(data.HOME_PHONE) + "<br>" 
@@ -136,27 +131,32 @@ public class EditStaffContactServlet extends HttpServlet{
 		}
 	}
 	
-	private String displayForm(HttpServletRequest req, HttpServletResponse resp, List<String> errors) throws IOException
+	private String displayForm(HttpServletRequest req, HttpServletResponse resp, List<String> errors, String staff) throws IOException
 	{	
 		
-		Query q = new Query(data.STAFF);
-		DatastoreService dsQ =  data.getDatastore();
-		List<Entity> users = dsQ.prepare(q).asList(FetchOptions.Builder.withDefaults());
-		Entity toUpdate = users.get(0);
+		Entity toUpdate = null;
+		try {
+			toUpdate = data.getStaff(staff);
+		} catch (EntityNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		resp.setContentType("text/html");
 		String http = "";
 		
 		http += "<form id=\"ccf\" method=\"POST\" action=\"/editStaffContact\">"
 		+			"<div id=\"title-create-staff\">"
-		+				"Edit Contact info: " + users.get(0).getProperty(data.NAME).toString()
+		+				"Edit Contact info: " + toUpdate.getProperty(data.NAME).toString()
 		+			"</div>";
 		
 		String name = toUpdate.getProperty(data.NAME).toString();
-		String office = toUpdate.getProperty(data.OFFICE_LOC).toString();
+		String office = toUpdate.getProperty(data.OFFICE_LOCATION).toString();
 		String officePhone = toUpdate.getProperty(data.OFFICE_PHONE).toString();
 		String homeAddress = toUpdate.getProperty(data.HOME_ADDRESS).toString();
 		String homePhone = toUpdate.getProperty(data.HOME_PHONE).toString();
+		System.out.println(name + "\n" + office + "\n" + officePhone + "\n" + homeAddress + "\n" + homePhone);
+		
 
 		if (errors.size() > 0) {
 			http += "<ul class='errors'>";
@@ -171,7 +171,8 @@ public class EditStaffContactServlet extends HttpServlet{
 		http += 	"<div id=\"sub\">"
 		+				"<table>"
 		+					"<tr>"
-		+						"<td class=\"form\">"
+		+						"<td class=\"form\" >"
+		+							"<input class='createStaffInput' type=\"hidden\" id='staff' name='staff' value='" + staff + "'/><br>"
 		+							"Office: <input class='createStaffInput' type=\"text\" id='officeLoc' name='office' value='" + office + "'/><br>"
 		+							"Office Phone: <input class='createStaffInput' type=\"text\" id='officePhone' name='officePhone' value='" + officePhone + "'/><br>"
 		+							"Home Address: <input class='createStaffInput' type=\"text\" id='homeAddress' name='homeAddress' value='" + homeAddress + "'/><br>"
@@ -182,6 +183,8 @@ public class EditStaffContactServlet extends HttpServlet{
 		+				"<input class=\"submit\" type=\"submit\" value=\"Submit\" />"
 		+			"</div>"
 		+		"</form>";
+		
+		
 		
 		return http;
 	}
