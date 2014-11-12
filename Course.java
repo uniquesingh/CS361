@@ -10,7 +10,7 @@ public class Course {
 	ArrayList<Section> sections;
 	
 	public Course(String des, String titl, ArrayList<Section> secs){
-		designation = des;
+		designation = des; 
 		title = titl;
 		sections = secs;
 	}
